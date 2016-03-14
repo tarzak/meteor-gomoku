@@ -1,0 +1,19 @@
+.players .col-md-4 {
+	text-align: center;
+}
+.players span.player-x {
+	color: red;
+}
+
+.players span.player-o {
+	color: green;
+}
+
+#board > svg {
+	width: 100%;
+	height: 650px;
+}
+
+#board svg text {
+	font-size: 25px;
+}

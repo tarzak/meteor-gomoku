@@ -1,0 +1,13 @@
+<template name="layout">
+    <div class="container">
+        <div class="row">
+            {{> header}}
+            <h1>Welcome to Gomoku!</h1>
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                {{> yield}}
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+</template>
