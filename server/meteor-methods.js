@@ -15,7 +15,7 @@ Meteor.methods({
       }
       cells[index] = sign;
       Boards.update({_id: "boardOne"}, {$set:{playersTurn: nextPlayersTurn, cells: cells}})
-      checkForWinner(this.userId, index, sign);
+      // checkForWinner(this.userId, index, sign);
     }
   },
 
@@ -24,7 +24,8 @@ Meteor.methods({
   }  
 });
 
-checkForWinner: function (userId, index, sign) {
+ function  checkForWinner (userId, index, sign) {
+  console.log(userId, index, sign)
   horizontalCheck(userId, index, sign);
 }
 
@@ -39,8 +40,9 @@ function horizontalCheck (userId, index, sign) {
     , terminate
     ;
 
-
+    console.log('start 1')
   while(!terminate || counter < 5 || signsInARow !== 5) {
+    terminate = true;
     counter += 1;
     if (cells[index + counter] && cells[index + counter] === sign) {
       signsInARow += 1
@@ -50,6 +52,7 @@ function horizontalCheck (userId, index, sign) {
   }
   terminate = false;
   counter = 0;
+  console.log('start 2')
   while(!terminate || counter < 5 || signsInARow !==5) {
     counter += 1;
     if (cells[index - counter] && cells[index - counter] === sign) {
