@@ -1,13 +1,3 @@
-var query = Boards.find();
-var handle = query.observeChanges({
-  added: function (document) {
-    console.log('Field with id added: ', document);
-  },
-  changed: function (newDocument, oldDocument) {
-    console.log('Field with id changed: ', newDocument);
-  }
-});
-
 UserStatus.events.on("connectionLogin", function(userData) {
   var boardOne = Boards.findOne("boardOne")
     , userId = userData.userId
@@ -16,11 +6,13 @@ UserStatus.events.on("connectionLogin", function(userData) {
     ;
 
   if (!playerX && playerO !== userId) {
+    console.log(1)
     Boards.update({_id: "boardOne"}, {$set:{"players.x": userId}});
-    setSignTo(userId, "x");
+    setSignTo(userId, "X");
   } else if (!playerO && playerX !== userId) {
-    Boards.update({_id: "boardOne"}, {$set:{"players.o": userId}});
-    setSignTo(userId, "o");
+    console.log(2)
+    Boards.update({_id: "boardOne"}, {$set:{"players.o": userId, playersTurn: playerX}});
+    setSignTo(userId, "O");
   }
 });
 
@@ -33,10 +25,10 @@ UserStatus.events.on("connectionLogout", function(userData) {
 
   setSignTo(userId, null);
 
-  if (playerX && playerX === userId) {
-    Boards.update({_id: "boardOne"}, {$set:{"players.x": null}});
+  if (playerX && playerX === userId) { //do we really need first part of condition?!
+    Boards.update({_id: "boardOne"}, {$set:{"players.x": null, playersTurn: null, winner: playerO || null}});
   } else if (playerO && playerO === userId) {
-    Boards.update({_id: "boardOne"}, {$set:{"players.o": null}});
+    Boards.update({_id: "boardOne"}, {$set:{"players.o": null, playersTurn: null, winner: playerX || null}});
   }
 });
 

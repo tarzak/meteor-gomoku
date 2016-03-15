@@ -1,40 +1,52 @@
 Template.board.onRendered(function () {
   var svg = d3.select("#board").append("svg")
-    // , cells = Boards.findOne({_id: "boardOne"}).cells
     ;
 
   this.autorun(function () {
-    var board = Boards && Boards.findOne({_id: "boardOne"})
-      , cells = board && board.cells
+    var cells = Boards.findOne({_id: "boardOne"}) && Boards.findOne({_id: "boardOne"}).cells
       , group = svg.selectAll("g").data(cells, function (d, i) { return i })
       , groupEnter = group.enter().append('g')
-      /*, rects = group.selectAll('rect').data(cells, function (d, i) {
-          return i;
-        })*/
       , fieldSize = 40
-      /*, fields = svg.selectAll('text').data(cells, function (d, i) {
-          return i;
-        })*/
       ;
     
-    /*rects.enter()*/groupEnter/*.enter()*//*.append("g")*/.append('rect')
+    groupEnter.append('rect')
       .attr("x", function (d, i) {
-          var multiplier = i % 15
-            ;
+        var multiplier = i % 15
+          ;
 
-          return multiplier * fieldSize;
+        this.index = i;  
+
+        return multiplier * fieldSize;
       })
       .attr("y", function (d, i) {
-          var multiplier = Math.floor(i/15)
-            ;
+        var multiplier = Math.floor(i/15)
+          ;
 
-          return multiplier * fieldSize;
+        return multiplier * fieldSize;
       })
       .attr("width", fieldSize + "px")
       .attr("height", fieldSize + "px")
       .attr("stroke", "black")
-      .attr("stoke-width", "2")
-      .attr("fill", "none")
+      .attr("stroke-width", "2")
+      .attr("fill", "white")
+      .on("click", function () {
+        var elementIndex = this.index
+          , thisValue = d3.select(this).data()[0]
+          , board = Boards.findOne('boardOne')
+          , playersTurn = board.playersTurn
+          , sign = Meteor.user().sign
+          , winner = board.winner
+          ;
+        if(!winner) {
+          if (!thisValue && playersTurn === Meteor.userId()) {
+            Meteor.call('setMark', elementIndex, sign);
+          } else {
+            console.log('It is not your turn. Wait pls.')
+          }
+        } else {
+          console.log('you should reset board');
+        }
+      });
 
       groupEnter.append('text')
         .attr("x", function(d, i) {
@@ -57,7 +69,7 @@ Template.board.onRendered(function () {
             return "green";
           }
         })
-        .text(function(d) {return d});
+        .text(function(d) { return d });
       
       group.select('text')
         .attr("fill",function (d) {
@@ -66,64 +78,34 @@ Template.board.onRendered(function () {
           } else if (d === "O") {
             return "green";
           }})
-        .text(function (d) { return d});
-
-    /*group.enter().append('rect')
-      .attr("x", function (d, i) {
-          var multiplier = i % 15
-            ;
-
-          return multiplier * fieldSize;
-      })
-      .attr("y", function (d, i) {
-          var multiplier = Math.floor(i/15)
-            ;
-
-          return multiplier * fieldSize;
-      })
-
-    /*var pars = div.selectAll("p").data(cells, function(d, i) {
-      return i; 
-    });
-
-    pars.text(function (d) {return d});
-
-    pars.enter().append("p").text(function (d) {return d});
-
-    pars.text(function (d) {return d});
-
-    pars.exit().remove();*/
-
+        .text(function (d) { return d });
   });
-
-  /*svg.append("rect")
-      .style("class", "fields")
-      .style("class", "rects")
-      .attr("x", function (d) {
-          return d.x*fieldSize;
-      })
-      .attr("y", function (d) {
-          return d.y*fieldSize;
-      })
-      .attr("width", fieldSize + "px")
-      .attr("height", fieldSize + "px")
-      .style("fill", function (d) {
-          if ( ((d.x%2 == 0) && (d.y%2 == 0)) ||
-               ((d.x%2 == 1) && (d.y%2 == 1))    ) 
-              return "beige";
-          else
-              return "tan";
-      });*/
 });
 
 Template.board.helpers({
-  playerX: function (sign) {
+  //looks like it is not necessary 'X' or 'O' after 'player'
+  playerX: function (sign) { 
     return getUserName(sign);
   },
   playerO: function (sign) {
     return getUserName(sign);
+  },
+  winner: function () {
+    var boardOne   = Boards.findOne("boardOne")
+      , Users      = Meteor.users
+      , winnerId   = boardOne.winner
+      , playerName = Users.findOne(winnerId) && Users.findOne(winnerId).username
+      ;
+
+    return playerName;
   }
 });
+
+Template.board.events({
+  "click .reset-board": function () {
+    Meteor.call('resetBoard');
+  }
+})
 
 function getUserName (sign) {
   var boardOne   = Boards.findOne("boardOne")

@@ -3,7 +3,9 @@ Meteor.startup(function () {
     Boards.insert({
     	_id: "boardOne",
     	players: {x: null, o: null}, 
-    	cells: []
+    	cells: [],
+    	winner: null,
+    	playersTurn: null
     });
   }
 });
