@@ -4,6 +4,7 @@ Meteor.methods({
       , cells = board.cells
       , playersTurn = board.playersTurn
       , nextPlayersTurn
+      , userId = this.userId
       ;
 
     if (this.userId === playersTurn && !cells[index]) {
@@ -14,8 +15,11 @@ Meteor.methods({
         nextPlayersTurn = board.players.x;
       }
       cells[index] = sign;
-      Boards.update({_id: "boardOne"}, {$set:{playersTurn: nextPlayersTurn, cells: cells}})
-      // checkForWinner(this.userId, index, sign);
+      Boards.update({_id: "boardOne"}, {$set:{playersTurn: nextPlayersTurn, cells: cells}}, {}, function (err, _id) {
+        if (!err) {
+          checkForWinner(userId, index, sign)
+        }
+      })
     }
   },
 
@@ -24,24 +28,212 @@ Meteor.methods({
   }  
 });
 
- function  checkForWinner (userId, index, sign) {
-  console.log(userId, index, sign)
-  horizontalCheck(userId, index, sign);
+function checkForWinner (userId, index, sign) {
+  if (!diagonalCheck (userId, index, sign)) {
+    if (!diagonalReverseCheck (userId, index, sign)) {
+      if (!horizontalCheck(userId, index, sign)) {
+        verticalCheck(userId, index, sign);
+      }
+    }
+  }
+  console.log('Full coincidence is not found!');
 }
 
-function verticalCheck () {}
-function diagonalCheck () {}
-function diagonalReverseCheck () {}
+
+function diagonalCheck (userId, index, sign) {
+  var counter = 0
+    , board = Boards.findOne("boardOne")
+    , cells = board.cells
+    , signsInARow = 1
+    , terminate = false
+    , differenceCounter = 14
+    ;
+  
+  while(counter < 5 && !terminate && signsInARow !== 5) {
+    counter += 1;
+    if (cells[index + differenceCounter] === sign) {
+      signsInARow += 1;
+    } else {
+      terminate = true;
+    }
+    if (signsInARow === 5) terminate = true;
+    differenceCounter += 14;
+  }
+  
+  differenceCounter = 14;
+  terminate = false;
+  counter = 0;
+  
+  while(counter < 5 && !terminate && signsInARow !== 5) {
+    counter += 1;
+    if (cells[index - differenceCounter] === sign) {
+      signsInARow += 1;
+    } else {
+      terminate = true;
+    }
+    if (signsInARow === 5) terminate = true;
+    differenceCounter += 14;
+  }
+  if (signsInARow === 5) {
+    Boards.update({_id: "boardOne"},{$set:{winner:userId}});
+
+    return true;
+  }
+  console.log(signsInARow) 
+}
+
+function diagonalReverseCheck (userId, index, sign) {
+  var counter = 0
+    , board = Boards.findOne("boardOne")
+    , cells = board.cells
+    , signsInARow = 1
+    , terminate = false
+    , differenceCounter = 16
+    ;
+  
+  while(counter < 5 && !terminate && signsInARow !== 5) {
+    counter += 1;
+    if (cells[index + differenceCounter] === sign) {
+      signsInARow += 1;
+    } else {
+      terminate = true;
+    }
+    if (signsInARow === 5) terminate = true;
+    differenceCounter += 16;
+  }
+  
+  differenceCounter = 16;
+  terminate = false;
+  counter = 0;
+  
+  while(counter < 5 && !terminate && signsInARow !== 5) {
+    counter += 1;
+    if (cells[index - differenceCounter] === sign) {
+      signsInARow += 1;
+    } else {
+      terminate = true;
+    }
+    if (signsInARow === 5) terminate = true;
+    differenceCounter += 16;
+  }
+  if (signsInARow === 5) {
+    Boards.update({_id: "boardOne"},{$set:{winner:userId}});
+
+    return true;
+  }
+  console.log(signsInARow) 
+}
+
+function verticalCheck (userId, index, sign) {
+  var counter = 0
+    , board = Boards.findOne("boardOne")
+    , cells = board.cells
+    , signsInARow = 1
+    , terminate = false
+    , differenceCounter = 15
+    ;
+
+  while(counter < 5 && !terminate && signsInARow !== 5) {
+    
+    counter += 1;
+    if (cells[index + differenceCounter] === sign) {
+      signsInARow += 1;
+    } else {
+      terminate = true;
+    }
+    if (signsInARow === 5) terminate = true;
+    differenceCounter += 15;
+  }
+  
+  differenceCounter = 15;
+  terminate = false;
+  counter = 0;
+  
+  while(counter < 5 && !terminate && signsInARow !== 5) {
+    counter += 1;
+    if (cells[index - differenceCounter] === sign) {
+      signsInARow += 1;
+    } else {
+      terminate = true;
+    }
+    if (signsInARow === 5) terminate = true;
+    differenceCounter += 15;
+  }
+  if (signsInARow === 5) {
+    Boards.update({_id: "boardOne"},{$set:{winner:userId}});
+
+    return true;
+  }
+  console.log(signsInARow)  
+}
+
 function horizontalCheck (userId, index, sign) {
   var counter = 0
     , board = Boards.findOne("boardOne")
     , cells = board.cells
     , signsInARow = 1
-    , terminate
+    , terminate = false
     ;
 
-    console.log('start 1')
-  while(!terminate || counter < 5 || signsInARow !== 5) {
+  while(counter < 5 && !terminate && signsInARow !== 5) {
+    counter += 1;
+    if (cells[index + counter] === sign) {
+      signsInARow += 1;
+    } else {
+      terminate = true;
+    }
+    if (signsInARow === 5) terminate = true;
+  }
+
+    terminate = false
+    counter = 0
+  while(counter < 5 && !terminate && signsInARow !== 5) {
+    counter += 1;
+    if (cells[index - counter] === sign) {
+      signsInARow += 1;
+    } else {
+      terminate = true;
+    }
+    if (signsInARow === 5) terminate = true;
+  }
+  if (signsInARow === 5) {
+    Boards.update({_id: "boardOne"},{$set:{winner:userId}});
+
+    return true;
+  }
+  console.log(signsInARow)
+
+}
+
+
+/*var arr = [0,1,2,3,6,5,6,7,8,9]
+var index = 4
+var newIndex = index
+var counter = 0
+var terminate = false
+var signsInArow = 0
+while(counter < 5 && !terminate && signsInArow !== 5) {
+
+if (arr[index+counter] === 6) signsInArow += 1;
+if (signsInArow === 5) terminate = true;
+console.log(arr[index + counter], signsInArow)
+counter += 1;
+newIndex += 1
+
+}
+
+console.log('end of first while')
+terminate = false
+counter = 0
+while(counter < 5 && !terminate && signsInArow !==5) {
+if (arr[index-counter] === 6) signsInArow += 1;
+if (signsInArow === 5) terminate = true;
+console.log(arr[index - counter], signsInArow)
+counter += 1;
+
+}*/
+  /*  console.log('start 1')
+  while(!terminate && counter < 5 && signsInARow < 5) {
     terminate = true;
     counter += 1;
     if (cells[index + counter] && cells[index + counter] === sign) {
@@ -65,4 +257,6 @@ function horizontalCheck (userId, index, sign) {
   if (signsInARow === 5) {
     Boards.update({_id:"boardOne"}, {$set:{winner: userId}})
   }
-}
+}*/
+
+

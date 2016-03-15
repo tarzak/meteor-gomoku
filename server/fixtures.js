@@ -3,7 +3,7 @@ Meteor.startup(function () {
     Boards.insert({
     	_id: "boardOne",
     	players: {x: null, o: null}, 
-    	cells: [],
+    	cells: new Array(225),
     	winner: null,
     	playersTurn: null
     });

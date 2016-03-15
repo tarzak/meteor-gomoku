@@ -6,11 +6,9 @@ UserStatus.events.on("connectionLogin", function(userData) {
     ;
 
   if (!playerX && playerO !== userId) {
-    console.log(1)
     Boards.update({_id: "boardOne"}, {$set:{"players.x": userId}});
     setSignTo(userId, "X");
   } else if (!playerO && playerX !== userId) {
-    console.log(2)
     Boards.update({_id: "boardOne"}, {$set:{"players.o": userId, playersTurn: playerX}});
     setSignTo(userId, "O");
   }

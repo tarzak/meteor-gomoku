@@ -37,14 +37,15 @@ Template.board.onRendered(function () {
           , sign = Meteor.user().sign
           , winner = board.winner
           ;
+
         if(!winner) {
           if (!thisValue && playersTurn === Meteor.userId()) {
             Meteor.call('setMark', elementIndex, sign);
           } else {
-            console.log('It is not your turn. Wait pls.')
+            alert('It is not your turn. Wait pls.')
           }
         } else {
-          console.log('you should reset board');
+          alert('You should reset board');
         }
       });
 
