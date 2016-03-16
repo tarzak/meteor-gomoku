@@ -1,23 +1,29 @@
 <template name="board">
 	<div class="row players">
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<h3><span class="player-x">X</span>: {{playerX 'x'}}</h3>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-3">
 			{{#if winner}}
 				<h3>Winner is: {{winner}}</h3>
 			{{/if}}
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<h3><span class="player-o">O</span>: {{playerO 'o'}}</h3>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-2"></div>
 		<div class="col-md-8">
 			<div id="board"></div>
 			<button class="btn btn-danger reset-board">Reset board</button>
 		</div>
-		<div class="col-md-2"></div>
+		<div class="col-md-4">
+			<h2>Rules:</h2>
+			<p>1. Players automatically get assigned to empty slots when logging in.</p>
+			<p>2. If after two assigned players there are logging in others, they will become observers.</p>
+			<p>3. As we got five in a row signs (marks), the board get blocked and we are getting the winner. Application waits for "Reset board" button press. All players and observer can do that, but only if there are no more than two assigned players.</p>
+			<p>4. Button "Reset board" resets assigned players too. For example if someone logging in after board is reset, he will be assigned to an empty slot.</p>
+			<p>5. It is always player with sign "X" has to go first.</p>
+		</div>
 	</div>
 </template>
