@@ -136,40 +136,28 @@ function verticalCheck (userId, index, sign) {
     , board = Boards.findOne("boardOne")
     , cells = board.cells
     , signsInARow = 1
-    , terminate = false
     , differenceCounter = 15
     ;
 
-  while(counter < 5 && !terminate && signsInARow !== 5) {
-    
+  while(counter < 5 && signsInARow !== 5) {
+
     counter += 1;
+
     if (cells[index + differenceCounter] === sign) {
       signsInARow += 1;
-    } else {
-      terminate = true;
     }
-    if (signsInARow === 5) terminate = true;
-    differenceCounter += 15;
-  }
-  
-  differenceCounter = 15;
-  terminate = false;
-  counter = 0;
-  
-  while(counter < 5 && !terminate && signsInARow !== 5) {
-    counter += 1;
+
     if (cells[index - differenceCounter] === sign) {
       signsInARow += 1;
-    } else {
-      terminate = true;
     }
-    if (signsInARow === 5) terminate = true;
-    differenceCounter += 15;
-  }
-  if (signsInARow === 5) {
-    Boards.update({_id: "boardOne"},{$set:{winner:userId}});
 
-    return true;
+    if (signsInARow === 5) {
+      Boards.update({_id: "boardOne"},{$set:{winner:userId}});
+
+      return true;
+    }
+
+    differenceCounter += 15;
   }
 }
 
@@ -178,33 +166,24 @@ function horizontalCheck (userId, index, sign) {
     , board = Boards.findOne("boardOne")
     , cells = board.cells
     , signsInARow = 1
-    , terminate = false
     ;
 
-  while(counter < 5 && !terminate && signsInARow !== 5) {
+  while(counter < 5 && signsInARow !== 5) {
+
     counter += 1;
+
     if (cells[index + counter] === sign) {
       signsInARow += 1;
-    } else {
-      terminate = true;
-    }
-    if (signsInARow === 5) terminate = true;
-  }
+    } 
 
-    terminate = false
-    counter = 0
-  while(counter < 5 && !terminate && signsInARow !== 5) {
-    counter += 1;
     if (cells[index - counter] === sign) {
       signsInARow += 1;
-    } else {
-      terminate = true;
-    }
-    if (signsInARow === 5) terminate = true;
-  }
-  if (signsInARow === 5) {
-    Boards.update({_id: "boardOne"},{$set:{winner:userId}});
+    } 
 
-    return true;
+    if (signsInARow === 5) {
+      Boards.update({_id: "boardOne"},{$set:{winner:userId}});
+
+      return true;
+    }
   }
 }
